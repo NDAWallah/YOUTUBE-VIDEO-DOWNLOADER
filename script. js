@@ -1,0 +1,212 @@
+// ==========================================
+// NDA WALLAH YOUTUBE DOWNLOADER
+// ==========================================
+
+// बाद में यहाँ अपना Render backend URL डालना है
+const API_BASE_URL =
+  "https://YOUR-RENDER-SERVICE.onrender.com";
+
+
+const form =
+  document.getElementById("downloadForm");
+
+const urlInput =
+  document.getElementById("youtubeUrl");
+
+const button =
+  document.getElementById("getVideoBtn");
+
+const status =
+  document.getElementById("status");
+
+const result =
+  document.getElementById("videoResult");
+
+
+// ==========================================
+// FORM SUBMIT
+// ==========================================
+
+form.addEventListener("submit", async function(event) {
+
+  event.preventDefault();
+
+  const youtubeUrl =
+    urlInput.value.trim();
+
+  if (!youtubeUrl) {
+    status.textContent =
+      "Please enter a YouTube URL.";
+
+    return;
+  }
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Loading...";
+
+  status.textContent =
+    "Getting video information...";
+
+  result.classList.add("hidden");
+
+  result.innerHTML = "";
+
+
+  try {
+
+    const response =
+      await fetch(
+        API_BASE_URL +
+        "/api/info?url=" +
+        encodeURIComponent(youtubeUrl)
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Unable to process this video."
+      );
+
+    }
+
+
+    result.innerHTML = `
+
+      <h3>
+        ${escapeHTML(data.title || "YouTube Video")}
+      </h3>
+
+      <p>
+        Channel:
+        ${escapeHTML(data.uploader || "Unknown")}
+      </p>
+
+      <p>
+        Duration:
+        ${formatDuration(data.duration)}
+      </p>
+
+      <a
+        href="${escapeHTML(data.webpage_url || youtubeUrl)}"
+        target="_blank"
+        rel="noopener"
+      >
+        Open Video
+      </a>
+
+    `;
+
+
+    result.classList.remove("hidden");
+
+    status.textContent =
+      "Video information loaded successfully.";
+
+  }
+
+  catch (error) {
+
+    status.textContent =
+      error.message;
+
+  }
+
+  finally {
+
+    button.disabled = false;
+
+    button.textContent =
+      "Get Video";
+
+  }
+
+});
+
+
+// ==========================================
+// FORMAT VIDEO DURATION
+// ==========================================
+
+function formatDuration(seconds) {
+
+  if (!Number.isFinite(seconds)) {
+
+    return "Unknown";
+
+  }
+
+
+  seconds =
+    Math.floor(seconds);
+
+
+  const hours =
+    Math.floor(seconds / 3600);
+
+  const minutes =
+    Math.floor(
+      (seconds % 3600) / 60
+    );
+
+  const secs =
+    seconds % 60;
+
+
+  if (hours > 0) {
+
+    return (
+      hours +
+      ":" +
+      String(minutes).padStart(2, "0") +
+      ":" +
+      String(secs).padStart(2, "0")
+    );
+
+  }
+
+
+  return (
+    minutes +
+    ":" +
+    String(secs).padStart(2, "0")
+  );
+
+}
+
+
+// ==========================================
+// SECURITY: HTML ESCAPE
+// ==========================================
+
+function escapeHTML(value) {
+
+  return String(value).replace(
+    /[&<>"']/g,
+
+    function(character) {
+
+      const entities = {
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+
+      };
+
+      return entities[character];
+
+    }
+  );
+
+}
