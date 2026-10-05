@@ -2,39 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YouTube Video Downloader</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <main class="card">
-    <h1>YouTube Video Downloader</h1>
-    <p class="sub">Paste a link, pick a format, download.</p>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <div class="row">
-      <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
-      <button id="fetchBtn">Fetch</button>
+  <title>NDA Wallah - YouTube Downloader</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <div class="logo">
+        NDA <span>WALLAH</span>
+      </div>
+
+      <h1>YouTube Video Downloader</h1>
+
+      <p class="subtitle">
+        Paste a YouTube video link below
+      </p>
+
+      <form id="downloadForm">
+
+        <input
+          type="url"
+          id="youtubeUrl"
+          placeholder="Paste YouTube URL here..."
+          required
+        >
+
+        <button type="submit" id="getVideoBtn">
+          Get Video
+        </button>
+
+      </form>
+
+      <div id="status"></div>
+
+      <div id="videoResult" class="hidden"></div>
+
+      <p class="warning">
+        Use this tool only for videos you own or have permission to download.
+      </p>
+
     </div>
 
-    <p id="msg" class="msg"></p>
+  </div>
 
-    <section id="result" hidden>
-      <img id="thumb" alt="Thumbnail">
-      <h2 id="title"></h2>
-      <p id="meta" class="sub"></p>
+  <script src="script.js"></script>
 
-      <div class="row">
-        <select id="kind">
-          <option value="video">Video (MP4)</option>
-          <option value="audio">Audio only (MP3)</option>
-        </select>
-        <select id="quality"></select>
-      </div>
-      <button id="dlBtn" class="primary">Download</button>
-    </section>
-
-    <p class="note">Only download content you own or have permission to save.</p>
-  </main>
-  <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
